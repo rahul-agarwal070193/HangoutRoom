@@ -5,6 +5,7 @@ import React, { Component } from "react";
 // import AllRoom from "./AllRoom";
 // import Navbar from "./Navbar";
 import LandingPage from "./LandingPage";
+import Api from "./Api";
 import {
     BrowserRouter as Router,
     Switch,
@@ -23,7 +24,8 @@ export default function Home() {
                     <Route exact path="/">
                         <LandingPage />
                     </Route>
-                    {/* <Route path="/join" component={RoomJoinPage} />
+                    <Route path="/api" component={Api} />
+                    {/* 
                         <Route path="/create" component={CreateRoomPage} />
                         <Route path="/room/:roomCode" component={Room} />
                         <Route path="/all_room" component={AllRoom} /> */}
