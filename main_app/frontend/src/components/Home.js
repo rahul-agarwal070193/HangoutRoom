@@ -1,11 +1,7 @@
 import React, { Component } from "react";
-// import RoomJoinPage from "./RoomJoinPage";
-// import CreateRoomPage from "./CreateRoomPage";
-// import Room from "./Room";
-// import AllRoom from "./AllRoom";
-// import Navbar from "./Navbar";
 import LandingPage from "./LandingPage";
-import Api from "./Api";
+import Room from "./Room";
+import Search from "./Search";
 import {
     BrowserRouter as Router,
     Switch,
@@ -24,7 +20,8 @@ export default function Home() {
                     <Route exact path="/">
                         <LandingPage />
                     </Route>
-                    <Route path="/api" component={Api} />
+                    <Route path="/room" component={Room} />
+                    <Route path="/search" component={Search} />
                     {/* 
                         <Route path="/create" component={CreateRoomPage} />
                         <Route path="/room/:roomCode" component={Room} />

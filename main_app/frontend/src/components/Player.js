@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function Api() {
+export default function Player() {
     return (
         <div>
-            hi
+            player app
         </div>
     )
 }
