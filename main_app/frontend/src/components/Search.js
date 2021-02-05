@@ -38,7 +38,7 @@ function Table() {
 }
 
 export default function Search(props) {
-    const [count, setcount] = useState("");
+    const [count, setcount] = useState("song");
     const [table, settable] = useState(null);
 
     const Change = (e) => {
@@ -50,7 +50,7 @@ export default function Search(props) {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         };
-        // response fetch
+        // response fetch 
         fetch("/api/search" + "?search=" + count, requestOptions)
             .then((response) => {
                 return response.json();
@@ -108,13 +108,13 @@ export default function Search(props) {
                                     {/* search bar*/}
                                     <section class="p-4 d-flex flex-fill justify-content-center ">
                                         <div class="form-outline">
-                                            <form class="d-flex">
+                                            <div class="d-flex">
                                                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
                                                     onChange={Change}
                                                     value={count} />
                                                 <button class="btn btn-outline-success" onClick={find}>Search</button>
-                                                <button class="btn btn-outline-warning" onClick={pri}>Print state</button>
-                                            </form>
+                                                {/* <button class="btn btn-outline-warning" onClick={pri}>Print state</button> */}
+                                            </div>
                                         </div>
                                     </section>
                                     {table !== null ? <Table /> : <></>}

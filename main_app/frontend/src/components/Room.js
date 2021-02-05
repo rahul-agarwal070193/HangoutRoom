@@ -11,15 +11,31 @@ export default function Room() {
                     <Search />
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Player</a>
+                    <a>player</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Chat</a>
                 </li>
             </ul>
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-8">
+                        <Player />
+                    </div>
+                    <div class="col-4 bg-dark">
+                        <header>Queue</header>
+                        <p></p>
+                    </div>
+                </div>
+                <iframe width="420" height="315"
+                    src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1">
+                </iframe>
+            </div>
+
             {/* 
             
-            <Player />
+           
             <Chat /> 
             <Queue />
             */}
