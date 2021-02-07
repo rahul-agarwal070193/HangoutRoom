@@ -46,7 +46,7 @@ class YoutubeSearch(APIView):
                 # # video duration if needed video id must be called
                 # 'duration': int(parse_duration(result['contentDetails']['duration']).total_seconds() // 60),
                 # video thumbnail image
-                'thumbnail': result['snippet']['thumbnails']['high']['url'],
+                'thumbnail': result['snippet']['thumbnails']['default']['url'],
                 # channel name
                 'channel_name': result['snippet']['channelTitle']
             }

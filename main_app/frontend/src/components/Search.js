@@ -1,35 +1,46 @@
 import React, { useState, useEffect } from 'react'
+import PlayCircleFilledTwoToneIcon from '@material-ui/icons/PlayCircleFilledTwoTone';
+import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
+function List(props) {
+    const data = props.data;
+    const pri = () => {
+        console.log(data);
+    }
+    return (
+        <>
+            <tr>
+                <td><img src={data.thumbnail}></img></td>
+                <td>{data.title}</td>
+                <td>{data.channel_name}</td>
+                <td><PlayCircleFilledTwoToneIcon /></td>
+                <td><AddCircleTwoToneIcon onClick={pri} /></td>
+            </tr>
 
-function Table() {
+            {/* <p> {data}</p> */}
+        </>
+    );
+
+}
+function Table(props) {
+    const data = props.data;
+    const pri = () => {
+        console.log(data);
+    }
     return (
         <div>
-            <table class="table">
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
+                        <th scope="col">Thumbnail</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Channel Name </th>
+                        <th scope="col">Play Now</th>
+                        <th scope="col">Add to playlist</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td colspan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
+                    {data.map((list) =>
+                        <List data={list} key={list.id} />)}
                 </tbody>
             </table>
 
@@ -50,12 +61,12 @@ export default function Search(props) {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         };
-        // response fetch 
+        // response fetch
         fetch("/api/search" + "?search=" + count, requestOptions)
             .then((response) => {
                 return response.json();
             }).then((data) => {
-                console.log(data);
+                // console.log(data);
                 settable(data);
             });
     }
@@ -95,29 +106,19 @@ export default function Search(props) {
                                     {this.state.errorMsg != "" ? <div class="alert alert-danger" role="alert">
                                         {this.state.errorMsg}</div> : null} */}
 
-                                    {/* text */}
-                                    {/* <div class="row text-center">
-                                        <h1 class="display-4 pt-4">
-                                            Update Room
-                                        </h1>
-                                        <p>
-                                            <small>Guest Control of Playback State</small>
-                                        </p>
-                                    </div> */}
-
                                     {/* search bar*/}
                                     <section class="p-4 d-flex flex-fill justify-content-center ">
-                                        <div class="form-outline">
+                                        <div class="form-outline mb-2">
                                             <div class="d-flex">
                                                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
                                                     onChange={Change}
                                                     value={count} />
-                                                <button class="btn btn-outline-success" onClick={find}>Search</button>
+                                                <button class="btn btn-outline-success " onClick={find}>Search</button>
                                                 {/* <button class="btn btn-outline-warning" onClick={pri}>Print state</button> */}
                                             </div>
                                         </div>
                                     </section>
-                                    {table !== null ? <Table /> : <></>}
+                                    {table !== null ? <Table data={table} /> : <></>}
                                 </div >
                             </div>
                         </div>

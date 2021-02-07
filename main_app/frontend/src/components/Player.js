@@ -6,18 +6,26 @@ export default class player extends React.Component {
         // access to player in all event handlers via event.target
         event.target.pauseVideo();
     }
+    pause() {
+        console.log("pause");
+    }
     render() {
         const opts = {
-            height: '500rem',
+            height: '450',
             width: '100%',
-            frameborder: "0",
             playerVars: {
                 // https://developers.google.com/youtube/player_parameters
                 autoplay: 1,
+                controls: 0,
             },
         };
 
-        return <YouTube videoId="_0ImYFii0EI" opts={opts} />;
+        return <YouTube
+            videoId="9zkFfBVgVtI"
+            opts={opts}
+            className=""
+            onPause={this.pause}
+        />;
     }
 
 
