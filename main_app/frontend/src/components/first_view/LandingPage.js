@@ -9,7 +9,7 @@ export default function LandingPage() {
                 <div class="row text-center">
                     <h1 class="display-4 pt-4">
                         landing page
-              </h1>
+                    </h1>
                     <p>
                         <small>Guest Control of Playback State</small>
                     </p>

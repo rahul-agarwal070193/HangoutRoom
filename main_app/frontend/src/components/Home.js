@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import LandingPage from "./LandingPage";
+import LandingPage from "./first_view/LandingPage";
 import Room from "./Room";
 import Search from "./Search";
-import Login from "./Login";
-import Signup from "./Signup";
-import Contact from "./Contact";
+import Login from "./first_view/Login";
+import Signup from "./first_view/Signup";
+import Contact from "./first_view/Contact";
+import Userhome from "./user_home/Userhome"
 import {
     BrowserRouter as Router,
     Switch,
@@ -28,6 +29,7 @@ export default function Home() {
                     <Route path="/login" component={Login} />
                     <Route path="/signup" component={Signup} />
                     <Route path="/contact" component={Contact} />
+                    <Route path="/home" component={Userhome} />
                     {/* 
                         <Route path="/create" component={CreateRoomPage} />
                         <Route path="/room/:roomCode" component={Room} />

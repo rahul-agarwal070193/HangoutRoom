@@ -7,7 +7,10 @@ export default function Signup() {
     const [email, setemail] = useState("");
     const [password, setpassword] = useState("");
     const [confirmpassword, setconfirmpassword] = useState("");
-
+    const [msg, setmsg] = useState("");
+    const [userunique, setuserunique] = useState('0');
+    const [emailunique, setemailunique] = useState(null);
+    const [err, seterr] = useState(false);
     const pri = () => {
         console.log(username);
         console.log(firstname);
@@ -15,12 +18,79 @@ export default function Signup() {
         console.log(email);
         console.log(password);
         console.log(confirmpassword);
+        console.log(userunique);
     }
     const checkusername = (e) => {
         setusername(e.target.value);
+        if (e.target.value === '') {
+            console.log(e.target.value);
+            setuserunique('0');
+        }
+        else {
+            fetch('/member/check_user?username=' + e.target.value).then(response => {
+                return response.json();
+            }).then(data => {
+                if (data === 'True')
+                    setuserunique('1');
+                else
+                    setuserunique('-1');
+            })
+        }
     }
-    const signup = () => {
-        console.log("s");
+    const checkemail = (e) => {
+        setemail(e.target.value);
+        fetch('/member/check_email?email=' + e.target.value).then(response => {
+            return response.json();
+        }).then(data => {
+            if (data === 'True')
+                setemailunique(true);
+            else
+                setemailunique(false);
+        })
+    }
+    async function signup() {
+        if (username === '') {
+            setmsg("Please fill out username field");
+        }
+        else if (firstname === '') {
+            setmsg("Please fill out first name field");
+        }
+        else if (lastname === '') {
+            setmsg("Please fill out last name field");
+        }
+        else if (email === '') {
+            setmsg("Please fill out email field");
+        }
+        else if (password === '') {
+            setmsg("Please fill out password field");
+        }
+        else if (confirmpassword === '') {
+            setmsg("Please fill out confirm password field");
+        }
+        else if (confirmpassword !== password) {
+            setmsg("password and confirm password does not matchs");
+        }
+        else {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: username,
+                    first_name: firstname,
+                    last_name: lastname,
+                    email: email,
+                    password: password
+                })
+            };
+
+            fetch('/member/register', requestOptions)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                });
+        }
     }
     return (
         <>
@@ -35,12 +105,32 @@ export default function Signup() {
                                 <h4 class="card-title mt-2">Sign Up</h4>
                             </header>
                             <article class="card-body">
+                                {msg ?
+                                    <div class="alert alert-danger" role="alert">
+                                        <i class="fas fa-exclamation-circle"> </i>{msg}
+                                    </div>
+                                    : null}
+
                                 {/* username */}
                                 <div class="form-group mb-3">
                                     <label for="id_username">Username</label>
-                                    <input type="text" class="form-control"
-                                        placeholder="150 characters or fewer. Letters, digits and @/./+/-/_ only." name="username"
-                                        maxlength="150" id="id_username" value={username} onChange={checkusername} />
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="150 characters or fewer. Letters, digits and @/./+/-/_ only."
+                                        name="username"
+                                        maxlength="150"
+                                        id="id_username"
+                                        value={username}
+                                        onChange={checkusername}
+                                        autoComplete="off"
+                                        required />
+                                    {userunique === '1' ?
+                                        <div class="invalid-feedback" style={{ display: "inherit" }}>
+                                            Username already taken.</div>
+                                        : userunique === '-1' ? <div class="valid-feedback" style={{ display: "inherit" }}>
+                                            Looks good! </div> : null}
+
                                 </div>
                                 {/* first name and second name */}
                                 <div class="row mb-3">
@@ -52,7 +142,8 @@ export default function Signup() {
                                             placeholder="First name"
                                             aria-label="First name"
                                             value={firstname}
-                                            onChange={(e) => { setfirstname(e.target.value) }} />
+                                            onChange={(e) => { setfirstname(e.target.value) }}
+                                            required />
                                     </div>
                                     <div class="col-md-6">
                                         <label for="id_last_name">Last Name</label>
@@ -63,6 +154,7 @@ export default function Signup() {
                                             aria-label="Last name"
                                             value={lastname}
                                             onChange={(e) => { setlastname(e.target.value) }}
+                                            required
                                         />
                                     </div>
                                 </div>
@@ -76,7 +168,13 @@ export default function Signup() {
                                         id="id_email"
                                         placeholder="Enter your email address"
                                         value={email}
-                                        onChange={(e) => { setemail(e.target.value) }} />
+                                        onChange={checkemail}
+                                        required />
+                                    {emailunique ?
+                                        <div class="invalid-feedback" style={{ display: "inherit" }}>
+                                            Email id already in use.</div>
+                                        : <div class="valid-feedback" style={{ display: "inherit" }}>
+                                            Looks good! </div>}
                                     <small class="form-text text-muted">Your email and personal information is not shared with any
                                 third parties, and we only use your email for communications related to our service, such as password resets.</small>
                                 </div>
@@ -89,7 +187,8 @@ export default function Signup() {
                                         name="password1"
                                         id="id_password1"
                                         value={password}
-                                        onChange={(e) => { setpassword(e.target.value) }} />
+                                        onChange={(e) => { setpassword(e.target.value) }}
+                                        required />
                                 </div>
                                 {/* confirm password */}
                                 <div class="form-group mb-3">
@@ -102,6 +201,7 @@ export default function Signup() {
                                         id="id_password2"
                                         value={confirmpassword}
                                         onChange={(e) => { setconfirmpassword(e.target.value) }}
+                                        required
                                     />
                                 </div>
                                 {/* text */}
@@ -111,15 +211,21 @@ export default function Signup() {
                                         you confirm that you accept
                                     our Terms of use and Privacy Policy.</small>
                                 </div>
-                                {/* sign up button */}
-                                <div class="form-group">
-                                    <button
-                                        class="btn btn-outline-warning text-dark"
-                                        onClick={signup}>
-                                        Sign Up</button>
-                                </div>
+
+
+
                             </article>
+                            {/* sign up button */}
+                            <button
+                                class="btn btn-outline-warning text-dark"
+                                onClick={signup}>
+                                Sign Up</button>
                         </div>
+                        <button
+                            class="btn btn-outline-warning text-dark"
+                            onClick={pri}>
+                            Sign Up</button>
+
 
                     </div>
 

@@ -3,9 +3,33 @@ import Navbar from "./Navbar"
 export default function Login() {
     const [username, setusername] = useState("");
     const [password, setpassword] = useState("");
+    const [msg, setmsg] = useState("");
     const pri = () => {
         console.log(password);
         console.log(username);
+    }
+    const login = () => {
+        if (username === '') {
+            setmsg("  Enter Username");
+        }
+        else if (password === '') {
+            setmsg("  Enter Password");
+        }
+        else {
+            fetch('/member/get_user?username=' + username + '&password=' + password)
+                .then(response => {
+                    if (response.ok)
+                        return response.json();
+                    else {
+                        setmsg(" Username or Password invalid");
+                        return {};
+                    }
+                })
+                .then(data => {
+                    window.location.reload('/home')
+                    // console.log(data);
+                });
+        }
     }
     return (
         <>
@@ -19,6 +43,11 @@ export default function Login() {
                                 <h4 class="card-title mt-2">Login</h4>
                             </header>
                             <article class="card-body">
+                                {msg ?
+                                    <div class="alert alert-danger" role="alert">
+                                        <i class="fas fa-exclamation-circle"> </i>{msg}
+                                    </div>
+                                    : null}
                                 {/* username */}
                                 <div class="form-group mb-3">
                                     <label for="id_username">Username</label>
@@ -44,7 +73,7 @@ export default function Login() {
                                 </div>
                                 <div class="form-group">
                                     <button
-                                        class="btn btn-outline-warning text-dark" onClick={pri}>
+                                        class="btn btn-outline-warning text-dark" onClick={login}>
                                         Login</button>
                                     {/* <a href="#" class="btn btn-outline-danger" role="button"
                                     aria-pressed="true"><i class="fas fa-exclamation-circle"></i> Forget Password</a> */}
