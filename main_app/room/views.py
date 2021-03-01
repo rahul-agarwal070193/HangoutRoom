@@ -240,7 +240,7 @@ class UserRoom(APIView):  # all the room that user is a part of
                 result.append(RoomSerializer(_.code).data)
             return Response(result, status=status.HTTP_200_OK)
         else:
-            return Response({"message": "Currently not part of any room"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'Bad Request': 'Not a part of any room'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateRoom(APIView):  # !!!!!!!!!!!!!currently not needed!!!!!!!!!!!!!

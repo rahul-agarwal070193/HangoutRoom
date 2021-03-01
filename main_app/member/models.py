@@ -7,7 +7,6 @@ class Member(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     password = models.CharField(max_length=100)
-    # room = models.ForeignKey("app.Model", verbose_name=_(""), on_delete=models.CASCADE)
 
     def __str__(self):
         return self.username

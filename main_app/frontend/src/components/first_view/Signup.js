@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Navbar from "./Navbar"
+import validator from 'validator'
 export default function Signup() {
     const [username, setusername] = useState("");
     const [firstname, setfirstname] = useState("");
@@ -9,7 +10,7 @@ export default function Signup() {
     const [confirmpassword, setconfirmpassword] = useState("");
     const [msg, setmsg] = useState("");
     const [userunique, setuserunique] = useState('0');
-    const [emailunique, setemailunique] = useState(null);
+    const [emailunique, setemailunique] = useState('0');
     const [err, seterr] = useState(false);
     const pri = () => {
         console.log(username);
@@ -23,11 +24,11 @@ export default function Signup() {
     const checkusername = (e) => {
         setusername(e.target.value);
         if (e.target.value === '') {
-            console.log(e.target.value);
+            // console.log(e.target.value);
             setuserunique('0');
         }
         else {
-            fetch('/member/check_user?username=' + e.target.value).then(response => {
+            fetch('/member/check-user?username=' + e.target.value).then(response => {
                 return response.json();
             }).then(data => {
                 if (data === 'True')
@@ -39,36 +40,55 @@ export default function Signup() {
     }
     const checkemail = (e) => {
         setemail(e.target.value);
-        fetch('/member/check_email?email=' + e.target.value).then(response => {
-            return response.json();
-        }).then(data => {
-            if (data === 'True')
-                setemailunique(true);
-            else
-                setemailunique(false);
-        })
+        if (e.target.value === '') {
+            // console.log(e.target.value);
+            setemailunique('0');
+        }
+        else if (validator.isEmail(e.target.value)) {
+            setemailunique('-1');
+        }
+        else if (!validator.isEmail(e.target.value)) {
+            setemailunique('1');
+        }
+        else {
+            fetch('/member/check-email?email=' + e.target.value).then(response => {
+                return response.json();
+            }).then(data => {
+                if (data === 'True')
+                    setemailunique('1');
+                else
+                    setemailunique('-1');
+            })
+        }
+
     }
     async function signup() {
         if (username === '') {
-            setmsg("Please fill out username field");
+            setmsg(" Please fill out username field");
         }
         else if (firstname === '') {
-            setmsg("Please fill out first name field");
+            setmsg(" Please fill out first name field");
         }
         else if (lastname === '') {
-            setmsg("Please fill out last name field");
+            setmsg(" Please fill out last name field");
         }
         else if (email === '') {
-            setmsg("Please fill out email field");
+            setmsg(" Please fill out email field");
         }
         else if (password === '') {
-            setmsg("Please fill out password field");
+            setmsg(" Please fill out password field");
         }
         else if (confirmpassword === '') {
-            setmsg("Please fill out confirm password field");
+            setmsg(" Please fill out confirm password field");
         }
         else if (confirmpassword !== password) {
-            setmsg("password and confirm password does not matchs");
+            setmsg(" password and confirm password does not matchs");
+        }
+        else if (userunique === '1') {
+            setmsg(" Username already taken");
+        }
+        else if (emailunique === '1') {
+            setmsg(" Email Id already exist");
         }
         else {
             const requestOptions = {
@@ -85,10 +105,7 @@ export default function Signup() {
 
             fetch('/member/register', requestOptions)
                 .then(response => {
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data);
+                    window.location.replace("/home");
                 });
         }
     }
@@ -105,11 +122,11 @@ export default function Signup() {
                                 <h4 class="card-title mt-2">Sign Up</h4>
                             </header>
                             <article class="card-body">
-                                {msg ?
+                                {msg ? <>
                                     <div class="alert alert-danger" role="alert">
                                         <i class="fas fa-exclamation-circle"> </i>{msg}
                                     </div>
-                                    : null}
+                                </> : null}
 
                                 {/* username */}
                                 <div class="form-group mb-3">
@@ -169,12 +186,14 @@ export default function Signup() {
                                         placeholder="Enter your email address"
                                         value={email}
                                         onChange={checkemail}
+                                        autoComplete="off"
                                         required />
-                                    {emailunique ?
+                                    {emailunique === '1' ?
                                         <div class="invalid-feedback" style={{ display: "inherit" }}>
                                             Email id already in use.</div>
-                                        : <div class="valid-feedback" style={{ display: "inherit" }}>
-                                            Looks good! </div>}
+                                        : emailunique === '-1' ? <div class="valid-feedback" style={{ display: "inherit" }}>
+                                            Looks good! </div> : null}
+
                                     <small class="form-text text-muted">Your email and personal information is not shared with any
                                 third parties, and we only use your email for communications related to our service, such as password resets.</small>
                                 </div>

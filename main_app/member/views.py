@@ -7,14 +7,33 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 
 
-class AllUser(generics.ListAPIView):
+class AllUser(generics.ListAPIView):  # get details about all the user present
+    """
+    get data of all the user
+    - 'id',
+    - 'username'
+    - 'first_name',
+    - 'last_name', 
+    - 'email',
+    - 'password'
+    """
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
 
-# for sign up request
 
+class CreateUser(APIView):  # for sign up request
+    """
+    takes a post request 
+    - username
+    - first_name
+    - last_name
+    - email
+    - password
+    and create a user
 
-class CreateUser(APIView):
+    -also store username in session variable 
+
+    """
     serializer_class = CreateMemberSerializer
 
     def post(self, request, format=None):
@@ -35,55 +54,75 @@ class CreateUser(APIView):
                 self.request.session.create()
             self.request.session['username'] = username
 
-            return Response(CreateMemberSerializer(user).data, status=status.HTTP_201_CREATED)
+            return Response({'Message': 'Sucess'}, status=status.HTTP_201_CREATED)
         else:
             # print(serializer.errors)
             error = serializer.errors
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# for login request
 
+class UserLogin(APIView):  # for login request
+    """
+    get a user data if present
+    takes a post request
+    - username
+    - password
+    return
+    - id
+    - username
+    - first_name
+    - last_name 
+    - email
+    - password
 
-class GetUser(APIView):
-    serializer_class = GetMemberSerializer
+    also store username in session variable 
+    """
+    serializer_class = MemberLoginSerializer
 
-    def get(self, request, format=None):
-        username = request.GET.get('username')
-        password = request.GET.get('password')
+    def post(self, request, format=None):
+        username = request.data.get('username')
+        password = request.data.get('password')
         user = Member.objects.filter(username=username, password=password)
         if user.exists():
             data = MemberSerializer(user[0]).data
+
             # save user id in session variable
             if not self.request.session.exists(self.request.session.session_key):
                 self.request.session.create()
             self.request.session['username'] = username
 
-            return Response(data, status=status.HTTP_200_OK)
+            return Response({'Message': 'Sucess'}, status=status.HTTP_200_OK)
         return Response({'User Not Found': 'Invalid Username or password.'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class InfoUser(APIView):
-    serializer_class = GetMemberSerializer
+class CheckUsername(APIView):  # To check if username alredy exist or not
+    """
+    take a get request
+    -username 
+    if user exist
+    -return true
+    else
+    -return false
+    """
 
-    def get(self, request, format=None):
-        username = request.GET.get('username')
-        user = Member.objects.filter(username=username)
-        if user.exists():
-            data = MemberSerializer(user[0]).data
-            return Response(data, status=status.HTTP_200_OK)
-        return Response({'User Not Found': 'Invalid Username or password.'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class Username(APIView):
     def get(self, request, format=None):
         username = request.GET.get('username')
         user = Member.objects.filter(username=username)
         if user.exists():
             return Response("True", status=status.HTTP_200_OK)
-        return Response("False", status=status.HTTP_400_BAD_REQUEST)
+        return Response("False", status=status.HTTP_200_OK)
 
 
-class Email(APIView):
+class CheckEmail(APIView):  # To check if Email id alredy exist or not
+    """
+    take a get request
+    -Email id
+    if user exist
+    -return true
+    else
+    -return false
+    """
+
     def get(self, request, format=None):
         email = request.GET.get('email')
         user = Member.objects.filter(email=email)
@@ -92,13 +131,25 @@ class Email(APIView):
         return Response("False", status=status.HTTP_200_OK)
 
 
-class UserDetail(APIView):
-    def get(self, request, format=None):
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
-        username = self.request.session['username']
-        user = Member.objects.filter(username=username)
-        if user.exists():
-            data = MemberSerializer(user[0]).data
-            return Response(data, status=status.HTTP_200_OK)
-        return Response("False", status=status.HTTP_400_BAD_REQUEST)
+# class UserDetail(APIView):
+#     def get(self, request, format=None):
+#         if not self.request.session.exists(self.request.session.session_key):
+#             self.request.session.create()
+#         username = self.request.session['username']
+#         user = Member.objects.filter(username=username)
+#         if user.exists():
+#             data = MemberSerializer(user[0]).data
+#             return Response(data, status=status.HTTP_200_OK)
+#         return Response("False", status=status.HTTP_400_BAD_REQUEST)
+
+
+# class InfoUser(APIView):  # !!!currently not needed!!!
+#     serializer_class = GetMemberSerializer
+
+#     def get(self, request, format=None):
+#         username = request.GET.get('username')
+#         user = Member.objects.filter(username=username)
+#         if user.exists():
+#             data = MemberSerializer(user[0]).data
+#             return Response(data, status=status.HTTP_200_OK)
+#         return Response({'User Not Found': 'Invalid Username or password.'}, status=status.HTTP_404_NOT_FOUND)
