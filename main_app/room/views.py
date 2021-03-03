@@ -238,9 +238,15 @@ class UserRoom(APIView):  # all the room that user is a part of
             result = []
             for _ in data:
                 result.append(RoomSerializer(_.code).data)
-            return Response(result, status=status.HTTP_200_OK)
+            return Response({'room': result,
+                             'username': username,
+                             'first_name': host.first_name,
+                             'last_name': host.last_name}, status=status.HTTP_200_OK)
         else:
-            return Response({'Bad Request': 'Not a part of any room'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Bad Request': 'Not a part of any room',
+                             'username': username,
+                             'first_name': host.first_name,
+                             'last_name': host.last_name}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateRoom(APIView):  # !!!!!!!!!!!!!currently not needed!!!!!!!!!!!!!

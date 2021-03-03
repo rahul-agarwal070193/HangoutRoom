@@ -16,19 +16,33 @@ export default function Login() {
             setmsg("  Enter Password");
         }
         else {
-            fetch('/member/get_user?username=' + username + '&password=' + password)
-                .then(response => {
-                    if (response.ok)
-                        return response.json();
-                    else {
-                        setmsg(" Username or Password invalid");
-                        return {};
-                    }
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
                 })
-                .then(data => {
-                    window.location.reload('/home')
-                    // console.log(data);
+            };
+
+            fetch('/member/user-login', requestOptions)
+                .then(response => {
+                    console.log(response);
+                    window.location.replace("/home");
                 });
+            // fetch('/member/get_user?username=' + username + '&password=' + password)
+            //     .then(response => {
+            //         if (response.ok)
+            //             return response.json();
+            //         else {
+            //             setmsg(" Username or Password invalid");
+            //             return {};
+            //         }
+            //     })
+            //     .then(data => {
+            //         window.location.reload('/home')
+            //         // console.log(data);
+            //     });
         }
     }
     return (

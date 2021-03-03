@@ -3,7 +3,9 @@ import Search from "./Search"
 import Player from "./Player"
 import Chat from "./Chat"
 // import Queue from "./Queue"
-export default function Room() {
+export default function Room(props) {
+    const code = props.match.params.code;
+    console.log(code);
     return (
         <div>
             <ul class="nav justify-content-center navbar nav-pills">

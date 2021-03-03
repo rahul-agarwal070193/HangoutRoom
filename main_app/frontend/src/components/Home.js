@@ -24,7 +24,7 @@ export default function Home() {
                     <Route exact path="/">
                         <LandingPage />
                     </Route>
-                    <Route path="/room" component={Room} />
+                    <Route path="/userroom/:code" component={Room} />
                     <Route path="/search" component={Search} />
                     <Route path="/login" component={Login} />
                     <Route path="/signup" component={Signup} />
