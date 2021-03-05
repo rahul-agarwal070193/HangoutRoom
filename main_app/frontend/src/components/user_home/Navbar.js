@@ -1,7 +1,6 @@
 import React from 'react'
 import Create from './Create'
 import Join from './Join'
-import Search from "../Search"
 function Navbar(props) {
     const name = props.firstname + " " + props.lastname;
     return (

@@ -2,9 +2,53 @@ import React, { useState, useEffect } from 'react'
 import PlayCircleFilledTwoToneIcon from '@material-ui/icons/PlayCircleFilledTwoTone';
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
 function List(props) {
+    const code = props.code;
     const data = props.data;
+    const msg = props.setmsg;
+    const update = props.update;
     const pri = () => {
         console.log(data);
+    }
+    const start = () => {
+        const requestOptions = {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                code: code,
+                song_name: data.title,
+                video_id: data.id
+            })
+        };
+        // response fetch
+        fetch("/room/queue-start", requestOptions)
+            .then((response) => {
+                return response.json();
+            }).then((data) => {
+                // console.log(data);
+            });
+        msg(data.title + " added to the list");
+        update(data.id);
+    }
+    const end = () => {
+        const requestOptions = {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                code: code,
+                song_name: data.title,
+                video_id: data.id
+            })
+        };
+        // response fetch
+        fetch("/room/queue-end", requestOptions)
+            .then((response) => {
+                return response.json();
+            }).then((data) => {
+                // console.log(data);
+            });
+        msg(data.title + " added to the list");
+        update(data.id);
+
     }
     return (
         <>
@@ -12,23 +56,22 @@ function List(props) {
                 <td><img src={data.thumbnail}></img></td>
                 <td>{data.title}</td>
                 <td>{data.channel_name}</td>
-                <td><PlayCircleFilledTwoToneIcon /></td>
-                <td><AddCircleTwoToneIcon onClick={pri} /></td>
+                <td><PlayCircleFilledTwoToneIcon onClick={start} color="primary" /></td>
+                <td><AddCircleTwoToneIcon onClick={end} color="action" /></td>
             </tr>
-
-            {/* <p> {data}</p> */}
         </>
     );
 
 }
 function Table(props) {
     const data = props.data;
+    const code = props.code;
     const pri = () => {
         console.log(data);
     }
     return (
         <div>
-            <table class="table table-striped">
+            <table class="table  table-responsive-sm">
                 <thead>
                     <tr>
                         <th scope="col">Thumbnail</th>
@@ -40,7 +83,7 @@ function Table(props) {
                 </thead>
                 <tbody>
                     {data.map((list) =>
-                        <List data={list} key={list.id} />)}
+                        <List data={list} key={list.id} code={code} setmsg={props.setmsg} seterrormsg={props.seterrormsg} update={props.update} />)}
                 </tbody>
             </table>
 
@@ -51,6 +94,10 @@ function Table(props) {
 export default function Search(props) {
     const [count, setcount] = useState("song");
     const [table, settable] = useState(null);
+    const [msg, setmsg] = useState("");
+    const [errormsg, seterrormsg] = useState("");
+    const code = props.code;
+    const update = props.update;
 
     const Change = (e) => {
         setcount(e.target.value);
@@ -99,12 +146,17 @@ export default function Search(props) {
                             </div>
                             <div class="modal-body">
                                 <div class="container-fluid">
-                                    {/* msg */}
-                                    {/* {this.state.successMsg != "" ? <div class="alert alert-success" role="alert">
-                                        {this.state.successMsg}</div> : null}
+                                    {/* msg  */}
+                                    {msg != "" ?
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            {msg}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div> : null}
 
-                                    {this.state.errorMsg != "" ? <div class="alert alert-danger" role="alert">
-                                        {this.state.errorMsg}</div> : null} */}
+                                    {errormsg != "" ? <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {errormsg}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div> : null}
 
                                     {/* search bar*/}
                                     <section class="p-4 d-flex flex-fill justify-content-center ">
@@ -118,7 +170,7 @@ export default function Search(props) {
                                             </div>
                                         </div>
                                     </section>
-                                    {table !== null ? <Table data={table} /> : <></>}
+                                    {table !== null ? <Table data={table} code={code} setmsg={setmsg} seterrormsg={seterrormsg} update={update} /> : <></>}
                                 </div >
                             </div>
                         </div>

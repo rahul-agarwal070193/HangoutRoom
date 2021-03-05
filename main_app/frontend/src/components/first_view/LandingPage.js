@@ -1,5 +1,6 @@
 import React from 'react'
 import Navbar from "./Navbar"
+// not net done
 export default function LandingPage() {
     return (
         <>

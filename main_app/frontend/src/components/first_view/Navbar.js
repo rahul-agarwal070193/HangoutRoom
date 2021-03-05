@@ -1,5 +1,6 @@
 import React from 'react'
 
+// change login and signup option if user is alredy in
 export default function Navbar() {
     return (
         <nav class="navbar navbar-expand-lg navbar-light sticky-top  shadow-lg p-3 mb-5 bg-white rounded ">

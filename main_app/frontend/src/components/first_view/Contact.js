@@ -1,5 +1,6 @@
 import React from 'react'
 import Navbar from "./Navbar"
+// not yet done
 export default function Contact() {
     const [name, setname] = React.useState("");
     const [email, setemail] = React.useState("");

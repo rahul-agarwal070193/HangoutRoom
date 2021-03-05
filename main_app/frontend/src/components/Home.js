@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import LandingPage from "./first_view/LandingPage";
-import Room from "./Room";
-import Search from "./Search";
+import Room from "./room/Room";
+import Search from "./room/Search";
 import Login from "./first_view/Login";
 import Signup from "./first_view/Signup";
 import Contact from "./first_view/Contact";

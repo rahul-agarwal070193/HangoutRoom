@@ -1,10 +1,9 @@
 import React, { useState, useEffect, Component } from 'react'
 import Navbar from "./Navbar"
-import Join from "./Join"
-import Create from './Create'
+
 
 // each room with join in functionality
-class Room extends Component {
+class RoomCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -135,7 +134,7 @@ export default function Userhome() {
                     </section>
                     <div class="row p-4">
                         {filter_data.map((room) =>
-                            <Room room={room} key={room.id} />)}
+                            <RoomCard room={room} key={room.id} />)}
                     </div>
                 </div> : <p>{msg}</p>}
             {/* <button class="btn" onClick={pri}>print</button> */}

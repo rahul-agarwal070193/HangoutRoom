@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
+
 
 export default function Create() {
+    const [name, setname] = useState("");
+    const [password, setpassword] = useState("");
+
     return (
         <>
 
@@ -11,17 +15,16 @@ export default function Create() {
                     type="button"
                     class="btn"
                     data-bs-toggle="modal"
-                    data-bs-target="#exampleModal"
-                    onClick={() => { console.log(1) }}>
+                    data-bs-target="#createmodel">
                     Create Room</button>
 
                 {/* <!-- Modal --> */}
-                <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal" id="createmodel" tabindex="-1" aria-labelledby="createmodelLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Room Settings</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title" id="createmodelLabel">Create Room</h5>
+                                <button type="button" class=" btn col-1" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times" style={{ "color": "#f06595" }}></i></button>
                             </div>
                             <div class="modal-body">
                                 <div class="container-fluid">
@@ -32,54 +35,31 @@ export default function Create() {
                                     {this.state.errorMsg != "" ? <div class="alert alert-danger" role="alert">
                                         {this.state.errorMsg}</div> : null} */}
 
-                                    {/* text */}
-                                    <div class="row text-center">
-                                        <h1 class="display-4 pt-4">
-                                            Update Room
-                                        </h1>
-                                        <p>
-                                            <small>Guest Control of Playback State</small>
-                                        </p>
-                                    </div>
-                                    {/* play pause button */}
-                                    <section class=" text-center ">
-                                        <div class="btn-group " role="group" >
-
+                                    {/* username */}
+                                    <section class="d-flex flex-fill justify-content-center ">
+                                        <div class="form-group mb-3">
+                                            <label for="id_username">Room Name</label>
                                             <input
-                                                value="true"
-                                                type="radio"
-                                                class="btn-check"
-                                                name="options"
-                                                id="option1"
-                                                autocomplete="off"
-                                            // checked
-                                            />
-                                            <label class="btn btn-outline-info" for="option1">Play and Pause</label>
-                                            <input
-                                                value="false"
-                                                type="radio"
-                                                class="btn-check"
-                                                name="options"
-                                                id="option2"
-                                                autocomplete="off" />
-                                            <label class="btn btn-outline-warning" for="option2">No Control</label>
-
-
-
+                                                type="text"
+                                                class="form-control"
+                                                name="username"
+                                                maxlength="150"
+                                                id="id_username"
+                                                value={name}
+                                                onChange={(e) => { setname(e.target.value) }} />
                                         </div>
                                     </section>
-                                    {/* vote count */}
-                                    <section class="p-4 d-flex flex-fill justify-content-center ">
-                                        <div class="form-outline">
-                                            <label class="form-label form-row" for="typeNumber">Votes To Skip Song</label>
+                                    {/* password */}
+                                    <section class="d-flex flex-fill justify-content-center ">
+                                        <div class="form-group mb-3">
+                                            <label for="id_password1">Password</label>
                                             <input
-                                                type="number"
-                                                id="typeNumber"
-                                                class="form-control active"
-                                                min={0}
-                                            // defaultValue={this.state.votesToSkip}
-                                            // onChange={this.handleVotesChange}
-                                            />
+                                                class="form-control"
+                                                type="password"
+                                                name="password1"
+                                                id="id_password1"
+                                                value={password}
+                                                onChange={(e) => { setpassword(e.target.value) }} />
                                         </div>
                                     </section>
                                     {/* sucess and back button  */}
@@ -88,8 +68,8 @@ export default function Create() {
                                             <button
                                                 type="button"
                                                 class="btn btn-outline-success"
-                                            // onClick={this.handleRoomButtonPressed}
-                                            >Update Settings</button>
+                                            // onClick={createroom}
+                                            >Create Room</button>
                                             <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close">Back</button>
                                         </div>
                                     </section>
