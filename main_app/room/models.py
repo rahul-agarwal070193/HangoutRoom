@@ -32,6 +32,8 @@ class Room(models.Model):
     host = models.ForeignKey(Member, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
+    start = models.IntegerField(default=0, blank=True, null=True)
+    end = models.IntegerField(default=0, blank=True, null=True)
 
     def __str__(self):
         return self.code
@@ -42,14 +44,15 @@ Queue is the model name
 -code(same as the room code unique)
 -song title
 -song position
--
+-videoid(youtube video id)
 """
 
 
 class Queue(models.Model):
-    code = models.CharField(max_length=8, unique=True)
+    code = models.CharField(max_length=8)
     song_name = models.CharField(max_length=255)
     song_position = models.IntegerField()
+    video_id = models.CharField(max_length=15)
 
 
 """

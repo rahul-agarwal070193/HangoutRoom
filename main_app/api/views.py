@@ -24,7 +24,7 @@ class YoutubeSearch(APIView):
             'key': youtube_key,  # my youtube api key
             'maxResults': 10,  # number of result
             'type': 'video',  # show only video result
-            'topicId': '/m/04rlf',  # search only music related video
+            # 'topicId': '/m/04rlf',  # search only music related video
             'relevanceLanguage': "en",
             'videoEmbeddable': "true",  # for video to be playable in website
             'videoSyndicated': "true",

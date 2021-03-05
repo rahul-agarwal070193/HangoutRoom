@@ -14,7 +14,7 @@ class RoomView(generics.ListAPIView):  # get all basic data of the all room
     get data of all the room
     -'id',
     -'code',
-    -'name', 
+    -'name',
     -'password',
     -'host'
     """
@@ -24,14 +24,14 @@ class RoomView(generics.ListAPIView):  # get all basic data of the all room
 
 class CreateRoomView(APIView):  # create a room
     """
-    takes a post request 
+    takes a post request
     - name
     - password
     and create a room using current_user(from the session variable)
 
-    -also create user in room 
+    -also create user in room
     -from current username
-    -room created 
+    -room created
     """
     serializer_class = CreateRoomSerializer
 
@@ -66,7 +66,7 @@ class GetRoom(APIView):  # get basic data relate to a particular room
     takes a post request
     -code of the room
     return
-    - id 
+    - id
     - name
     - code
     - password
@@ -118,16 +118,17 @@ class JoinRoom(APIView):  # user can join  a room
     user can join  a room
     takes a post request
     -code
+    -password
     take current user from session variable
     add user to user in room table
     """
-    lookup_url_kwarg = 'code'
     serializer_class = CodeSerializer
 
     def post(self, request, format=None):
-        code = request.data.get(self.lookup_url_kwarg)
+        code = request.data.get('code')
+        password = request.data.get('password')
         if code != None:
-            room_result = Room.objects.filter(code=code)
+            room_result = Room.objects.filter(code=code, password=password)
             if room_result.exists():
                 room = room_result[0]  # room to be added
                 username = self.request.session['username']  # current username
@@ -187,10 +188,10 @@ class DeleteRoom(APIView):  # delete a room
 class LeaveRoom(APIView):  # user to leave a room
     """
     -take room code as request
-    -find if room exist or not 
+    -find if room exist or not
     -if exist
-        -find current user 
-        -if user is host delete room 
+        -find current user
+        -if user is host delete room
         -if not delete user and room from user in  room table
     -else
         -bad request
@@ -225,7 +226,7 @@ class LeaveRoom(APIView):  # user to leave a room
 
 class UserRoom(APIView):  # all the room that user is a part of
     """
-    all the room that user is a part of 
+    all the room that user is a part of
     only the current user room data can be extracted
     """
 
@@ -247,6 +248,80 @@ class UserRoom(APIView):  # all the room that user is a part of
                              'username': username,
                              'first_name': host.first_name,
                              'last_name': host.last_name}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class QueueEnd(APIView):  # add song to the end of the queue
+    """
+    """
+    serializer_class = QueueSerializer
+
+    def patch(self, request, format=None):
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            # variable creation
+            code = serializer.data.get('code')
+            song_name = serializer.data.get('song_name')
+            video_id = serializer.data.get('video_id')
+            queryset = Room.objects.filter(code=code)
+            if queryset.exists():
+                room = queryset[0]
+                end = room.end
+                queue = Queue(code=code, song_name=song_name,
+                              video_id=video_id, song_position=end+1)
+                queue.save()
+                room.end = end+1
+                room.save(update_fields=['end'])
+                return Response({'msg': 'Sucess'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'msg': 'Room not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class QueueStart(APIView):  # add song to the end of the queue
+    """
+    """
+    serializer_class = QueueSerializer
+
+    def patch(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            # variable creation
+            code = serializer.data.get('code')
+            song_name = serializer.data.get('song_name')
+            video_id = serializer.data.get('video_id')
+            queryset = Room.objects.filter(code=code)
+            if queryset.exists():
+                room = queryset[0]
+                start = room.start
+                queue = Queue(code=code, song_name=song_name,
+                              video_id=video_id, song_position=start-1)
+                queue.save()
+                room.start = start-1
+                room.save(update_fields=['start'])
+                return Response({'msg': 'Sucess'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'msg': 'Room not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetQueue(APIView):  # get all the song of the room in the queue
+    """
+
+    """
+
+    def get(self, request, format=None):
+        code = request.GET.get('code')
+        queryset = Queue.objects.filter(code=code).order_by('song_position')
+        if queryset.exists():
+            result = []
+            for data in queryset:
+                result.append(QueueAllSerializer(data).data)
+            return Response({'msg': "Sucess",
+                             'queue': result}, status=status.HTTP_200_OK)
+        else:
+            return Response({'Bad Request': 'Empty Queue',
+                             'queue': []}, status=status.HTTP_200_OK)
 
 
 class UpdateRoom(APIView):  # !!!!!!!!!!!!!currently not needed!!!!!!!!!!!!!

@@ -13,5 +13,8 @@ urlpatterns = [
     path('all-room-of-user', UserRoom.as_view()),
     path('delete-room', DeleteRoom.as_view()),
     path('leave-room', LeaveRoom.as_view()),
+    path('queue-end', QueueEnd.as_view()),
+    path('queue-start', QueueStart.as_view()),
+    path("queue", GetQueue.as_view())
     # path('update-room', UpdateRoom.as_view()),
 ]

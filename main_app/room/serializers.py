@@ -26,3 +26,15 @@ class UpdateRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = ('name', 'password')
+
+
+class QueueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Queue
+        fields = ('code', 'song_name', 'video_id')
+
+
+class QueueAllSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Queue
+        fields = ('song_name', 'video_id')
