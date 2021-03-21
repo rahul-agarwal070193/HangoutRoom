@@ -55,9 +55,10 @@ class CreateRoomView(APIView):  # create a room
             stuff = UserInRoom(user=host, code=room)
             stuff.save()
             # self.request.session['room_code'] = room.code
-            return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
+            return Response({'room': RoomSerializer(room).data,
+                             'msg': 'Success'}, status=status.HTTP_201_CREATED)
 
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'msg': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetRoom(APIView):  # get basic data relate to a particular room
@@ -96,19 +97,18 @@ class RoomUser(APIView):  # get all the user present in the room
 
     def post(self, request, format=None):
         code = request.data.get('code')
-        print(code)
         if(code == None):
-            return JsonResponse("code invalid", status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"msg": "code invalid"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             queryset = Room.objects.filter(code=code)
-            room = queryset[0]
-            data = UserInRoom.objects.filter(code=room)
-            print(data)
-            result = []
-            if data.exists():
-                for _ in data:
-                    result.append(MemberSerializer(_.user).data)
-                return Response(result, status=status.HTTP_200_OK)
+            if queryset.exists():
+                room = queryset[0]
+                data = UserInRoom.objects.filter(code=room)
+                result = []
+                if data.exists():
+                    for _ in data:
+                        result.append(MemberSerializer(_.user).data)
+                    return Response({"users": result, "msg": "Success"}, status=status.HTTP_200_OK)
             else:
                 return Response({'message': 'Room does not exist'}, status=status.HTTP_200_OK)
 
@@ -135,15 +135,19 @@ class JoinRoom(APIView):  # user can join  a room
                 queryset = Member.objects.filter(username=username)
                 host = queryset[0]
                 if UserInRoom.objects.filter(code=room, user=host).exists():
-                    return Response({'message': 'already in room'}, status=status.HTTP_200_OK)
+                    return Response({'msg': 'already in room',
+                                     'type': 'Success'}, status=status.HTTP_200_OK)
                 else:
                     stuff = UserInRoom(user=host, code=room)
                     stuff.save()
-                    return Response({'message': 'Room Joined!'}, status=status.HTTP_200_OK)
+                    return Response({'msg': 'Room Joined!',
+                                     'type': 'Success'}, status=status.HTTP_200_OK)
 
-            return Response({'Bad Request': 'Invalid Room Code'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'msg': 'Invalid Room Code',
+                             'type': 'Failed'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'Bad Request': 'Invalid post data, did not find a code key'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'msg': 'Invalid post data, did not find a code key',
+                         'type': 'Failed'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CheckUserInRoom(APIView):  # check if a user is in a room or not
@@ -210,6 +214,7 @@ class LeaveRoom(APIView):  # user to leave a room
                 current_user = queryset[0]
                 if current_user == room.host:  # !!!!!!!!!!
                     room.delete()
+                    return Response({'message': 'Removed from Room'}, status=status.HTTP_200_OK)
                 else:
                     stuff = UserInRoom.objects.filter(
                         user=current_user, code=room)
@@ -313,15 +318,37 @@ class GetQueue(APIView):  # get all the song of the room in the queue
     def get(self, request, format=None):
         code = request.GET.get('code')
         queryset = Queue.objects.filter(code=code).order_by('song_position')
+        room = Room.objects.filter(code=code)
+        is_host = False
+        host = room[0].host
+        username = self.request.session['username']
+        if(username == host.username):
+            is_host = True
         if queryset.exists():
+
             result = []
             for data in queryset:
                 result.append(QueueAllSerializer(data).data)
             return Response({'msg': "Sucess",
-                             'queue': result}, status=status.HTTP_200_OK)
+                             'queue': result,
+                             "is_host": is_host}, status=status.HTTP_200_OK)
         else:
             return Response({'Bad Request': 'Empty Queue',
-                             'queue': []}, status=status.HTTP_200_OK)
+                             'queue': [],
+                             "is_host": is_host}, status=status.HTTP_200_OK)
+
+
+class DeleteElementFromQueue(APIView):  # delete video from the queue of a room
+
+    def post(self, request, format=None):
+        code = request.data.get('code')
+        video_id = request.data.get('video_id')
+        element = Queue.objects.filter(code=code, video_id=video_id)
+        if element.exists():
+            element.delete()
+            return Response({'message': 'Video deleted'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Video not found'}, status=status.HTTP_200_OK)
 
 
 class UpdateRoom(APIView):  # !!!!!!!!!!!!!currently not needed!!!!!!!!!!!!!

@@ -3,6 +3,7 @@ import Create from './Create'
 import Join from './Join'
 function Navbar(props) {
     const name = props.firstname + " " + props.lastname;
+    const update = props.update;
     return (
         <>
             <nav class="navbar navbar-expand-lg navbar-light  shadow-lg  mb-2 bg-white rounded ">
@@ -14,10 +15,10 @@ function Navbar(props) {
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav p-2 d-flex flex-fill justify-content-end me-5">
                             <li class="nav-item">
-                                <Create />
+                                <Create update={update} />
                             </li>
                             <li class="nav-item">
-                                <Join />
+                                <Join update={update} />
                             </li>
                             <li class="nav-item">
                                 <button class="btn">Profile</button>

@@ -24,3 +24,4 @@ urlpatterns = [
     path('member/', include("member.urls")),
     path('room/', include("room.urls")),
 ]
+handler404 = 'frontend.views.test'

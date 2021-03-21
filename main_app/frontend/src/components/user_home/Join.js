@@ -1,9 +1,38 @@
 import React, { useState } from 'react'
 
-export default function Join() {
+export default function Join(props) {
     const [code, setcode] = useState("");
     const [password, setpassword] = useState("");
+    const update = props.update;
+    const [successMsg, setsuccessMsg] = useState("");
+    const [errorMsg, seterrorMsg] = useState("");
+    const initial = () => {
+        seterrorMsg(""); setsuccessMsg("");
+    }
+    const joinroom = () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                code: code,
+                password: password
+            })
+        };
 
+        fetch('/room/join-room', requestOptions)
+            .then(response => {
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                if (data.type === 'Success') {
+                    update("room joined " + code);
+                    setsuccessMsg(data.msg);
+                }
+                else {
+                    seterrorMsg(data.msg);
+                }
+            });
+    }
     return (
         <>
 
@@ -14,7 +43,8 @@ export default function Join() {
                     type="button"
                     class="btn"
                     data-bs-toggle="modal"
-                    data-bs-target="#joinmodel">
+                    data-bs-target="#joinmodel"
+                    onclick={initial}>
                     Join Room</button>
 
                 {/* <!-- Modal --> */}
@@ -28,11 +58,10 @@ export default function Join() {
                             <div class="modal-body">
                                 <div class="container-fluid">
                                     {/* msg */}
-                                    {/* {this.state.successMsg != "" ? <div class="alert alert-success" role="alert">
-                                        {this.state.successMsg}</div> : null} */}
-                                    {/* 
-                                    {this.state.errorMsg != "" ? <div class="alert alert-danger" role="alert">
-                                        {this.state.errorMsg}</div> : null} */}
+                                    {successMsg != "" ? <div class="alert alert-success" role="alert">
+                                        {successMsg}</div> : null}
+                                    {errorMsg != "" ? <div class="alert alert-danger" role="alert">
+                                        {errorMsg}</div> : null}
 
                                     {/* username */}
                                     <section class="d-flex flex-fill justify-content-center ">
@@ -41,9 +70,7 @@ export default function Join() {
                                             <input
                                                 type="text"
                                                 class="form-control"
-                                                name="username"
                                                 maxlength="20"
-                                                id="id_username"
                                                 value={code}
                                                 onChange={(e) => { setcode(e.target.value) }} />
                                         </div>
@@ -55,8 +82,6 @@ export default function Join() {
                                             <input
                                                 class="form-control"
                                                 type="password"
-                                                name="password1"
-                                                id="id_password1"
                                                 value={password}
                                                 onChange={(e) => { setpassword(e.target.value) }} />
                                         </div>
@@ -68,7 +93,7 @@ export default function Join() {
                                             <button
                                                 type="button"
                                                 class="btn btn-outline-success"
-                                            // onClick={joinsroom}
+                                                onClick={joinroom}
                                             >Join Room</button>
                                             <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close">Back</button>
                                         </div>

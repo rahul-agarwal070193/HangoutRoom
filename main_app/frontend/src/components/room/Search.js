@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PlayCircleFilledTwoToneIcon from '@material-ui/icons/PlayCircleFilledTwoTone';
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
+import SearchIcon from '@material-ui/icons/Search';
 function List(props) {
     const code = props.code;
     const data = props.data;
@@ -129,13 +130,7 @@ export default function Search(props) {
             {/* model */}
             <div>
                 {/* <!-- Button trigger modal --> */}
-                <button
-                    type="button"
-                    class="btn"
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal">
-                    <i class="fas fa-search"></i></button>
-
+                <SearchIcon data-bs-toggle="modal" data-bs-target="#exampleModal" />
                 {/* <!-- Modal --> */}
                 <div class="modal fade modal-fullscreen" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-fullscreen">

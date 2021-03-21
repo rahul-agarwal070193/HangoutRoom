@@ -1,10 +1,39 @@
 import React, { useState } from 'react'
 
 
-export default function Create() {
+export default function Create(props) {
     const [name, setname] = useState("");
     const [password, setpassword] = useState("");
+    const update = props.update;
+    const [successMsg, setsuccessMsg] = useState("");
+    const [errorMsg, seterrorMsg] = useState("");
+    const initial = () => {
+        seterrorMsg(""); setsuccessMsg("");
+    }
+    const createroom = () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                password: password
+            })
+        };
 
+        fetch('/room/create-room', requestOptions)
+            .then(response => {
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                if (data.msg === 'Success') {
+                    update("created room " + data.room.code);
+                    setsuccessMsg("Room created!!!!!!!!")
+                }
+                else {
+                    seterrorMsg(data.msg);
+                }
+            });
+    }
     return (
         <>
 
@@ -15,7 +44,8 @@ export default function Create() {
                     type="button"
                     class="btn"
                     data-bs-toggle="modal"
-                    data-bs-target="#createmodel">
+                    data-bs-target="#createmodel"
+                    onClick={initial}>
                     Create Room</button>
 
                 {/* <!-- Modal --> */}
@@ -29,11 +59,11 @@ export default function Create() {
                             <div class="modal-body">
                                 <div class="container-fluid">
                                     {/* msg */}
-                                    {/* {this.state.successMsg != "" ? <div class="alert alert-success" role="alert">
-                                        {this.state.successMsg}</div> : null} */}
-                                    {/* 
-                                    {this.state.errorMsg != "" ? <div class="alert alert-danger" role="alert">
-                                        {this.state.errorMsg}</div> : null} */}
+                                    {successMsg != "" ? <div class="alert alert-success" role="alert">
+                                        {successMsg}</div> : null}
+
+                                    {errorMsg != "" ? <div class="alert alert-danger" role="alert">
+                                        {errorMsg}</div> : null}
 
                                     {/* username */}
                                     <section class="d-flex flex-fill justify-content-center ">
@@ -68,7 +98,7 @@ export default function Create() {
                                             <button
                                                 type="button"
                                                 class="btn btn-outline-success"
-                                            // onClick={createroom}
+                                                onClick={createroom}
                                             >Create Room</button>
                                             <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close">Back</button>
                                         </div>
